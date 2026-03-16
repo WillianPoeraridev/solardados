@@ -10,7 +10,7 @@ datasource db {
 model Distribuidora {
   id                  Int       @id @default(autoincrement())
   nome                String
-  sigla               String?
+  sigla               String    @unique
   estados             String[]
   tarifaResidencial   Float
   dataUltimoReajuste  DateTime?
