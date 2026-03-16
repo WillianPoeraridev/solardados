@@ -1,11 +1,151 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
 }
 
-// TODO: definir modelos nas próximas iterações
+model Distribuidora {
+  id                  Int       @id @default(autoincrement())
+  nome                String
+  sigla               String?
+  estados             String[]
+  tarifaResidencial   Float
+  dataUltimoReajuste  DateTime?
+  bandeiraTarifaria   String    @default("verde")
+  ativa               Boolean   @default(true)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  municipios   Municipio[]
+  instaladoras Instaladora[]
+}
+
+model Municipio {
+  id               Int      @id @default(autoincrement())
+  codigoIbge       String   @unique
+  nome             String
+  slug             String   @unique
+  estado           String
+  irradiacaoMedia  Float
+  distribuidoraId  Int
+  consumoMedioKwh  Float?
+  populacao        Int?
+  domicilios       Int?
+  custoKwpMinimo   Float?
+  custoKwpMedio    Float?
+  custoKwpMaximo   Float?
+  ativa            Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  distribuidora Distribuidora @relation(fields: [distribuidoraId], references: [id])
+  instaladoras  Instaladora[]
+  simulacoes    Simulacao[]
+  leads         Lead[]
+
+  @@index([estado])
+  @@index([slug])
+}
+
+model Instaladora {
+  id                Int      @id @default(autoincrement())
+  cnpj              String?  @unique
+  nome              String
+  cidade            String
+  estado            String
+  municipioId       Int?
+  distribuidoraId   Int?
+  googleRating      Float?
+  googleReviews     Int?
+  reclameAquiScore  Float?
+  anosMercado       Int?
+  telefone          String?
+  email             String?
+  website           String?
+  googlePlaceId     String?  @unique
+  ativa             Boolean  @default(true)
+  leadParceira      Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  municipio     Municipio?     @relation(fields: [municipioId], references: [id])
+  distribuidora Distribuidora? @relation(fields: [distribuidoraId], references: [id])
+  leads         Lead[]
+  eventos       EventoLead[]
+
+  @@index([estado])
+  @@index([municipioId])
+}
+
+model Simulacao {
+  id                String   @id @default(cuid())
+  sessionId         String?
+  municipioId       Int
+  consumoKwh        Float
+  valorConta        Float
+  tipoImovel        String
+  areaDisponivel    Float?
+  sistemaKwp        Float
+  custoEstimadoMin  Float
+  custoEstimadoMax  Float
+  economiaMensal    Float
+  economiaAnual25   Float
+  paybackMeses      Int
+  co2EvitadoKgAno   Float?
+  quantidadePaineis Int?
+  createdAt         DateTime @default(now())
+
+  municipio Municipio @relation(fields: [municipioId], references: [id])
+  lead      Lead?
+
+  @@index([municipioId])
+  @@index([createdAt])
+}
+
+model Lead {
+  id                      String    @id @default(cuid())
+  simulacaoId             String?   @unique
+  nome                    String
+  telefone                String
+  email                   String
+  municipioId             Int
+  consumoKwh              Float
+  valorConta              Float
+  casaPropria             Boolean?
+  optinContato            Boolean   @default(false)
+  score                   Int       @default(0)
+  status                  String    @default("novo")
+  instaladoraNotificadaId Int?
+  enviadoEm               DateTime?
+  aceitoEm                DateTime?
+  motivoDevolucao         String?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  simulacao              Simulacao?   @relation(fields: [simulacaoId], references: [id])
+  municipio              Municipio    @relation(fields: [municipioId], references: [id])
+  instaladoraNotificada  Instaladora? @relation(fields: [instaladoraNotificadaId], references: [id])
+  eventos                EventoLead[]
+
+  @@index([municipioId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model EventoLead {
+  id             String   @id @default(cuid())
+  leadId         String
+  tipo           String
+  instaladoraId  Int?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+
+  lead        Lead         @relation(fields: [leadId], references: [id])
+  instaladora Instaladora? @relation(fields: [instaladoraId], references: [id])
+
+  @@index([leadId])
+  @@index([createdAt])
+}
