@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,6 +9,9 @@ export const metadata: Metadata = {
     "Simulador gratuito de energia solar com dados reais por cidade. Calcule payback, economia e custo de instalação em São Paulo, Curitiba, BH, Campinas e Porto Alegre.",
   metadataBase: new URL("https://solardados.com.br"),
   alternates: { canonical: "https://solardados.com.br" },
+  verification: {
+    google: "rbYhYnjEJOWZHxNzfQgfqcj3VfVcD-ZyNFro5NnuX6k",
+  },
 };
 
 export default function RootLayout({
@@ -18,6 +22,8 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className="min-h-screen flex flex-col">
+        <GoogleAnalytics />
+
         <header className="border-b border-gray-200 bg-white">
           <div className="mx-auto max-w-5xl px-4 py-4 flex items-center justify-between">
             <Link href="/" className="text-xl font-bold text-yellow-600">

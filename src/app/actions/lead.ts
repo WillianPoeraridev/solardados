@@ -6,6 +6,7 @@ import {
   validarEmail,
   calcularScoreLead,
 } from "@/lib/validators";
+import { notificarNovoLead } from "@/lib/email";
 
 interface LeadInput {
   nome: string;
@@ -14,6 +15,8 @@ interface LeadInput {
   casaPropria: boolean | null;
   optinContato: boolean;
   municipioId: number;
+  nomeCidade: string;
+  estado: string;
   irradiacaoMedia: number;
   simulacao: {
     valorContaMensal: number;
@@ -143,6 +146,26 @@ export async function criarLead(input: LeadInput): Promise<LeadResult> {
 
     return novoLead;
   });
+
+  // Notificação por e-mail (não bloqueia o retorno do lead)
+  try {
+    await notificarNovoLead({
+      leadId: lead.id,
+      nomeCliente: nome,
+      telefone: telDigitos,
+      email,
+      cidade: input.nomeCidade,
+      estado: input.estado,
+      consumoKwh: sim.consumoEstimadoKwh,
+      valorConta: sim.valorContaMensal,
+      sistemaKwp: sim.sistemaKwp,
+      custoEstimadoMedio: sim.custoEstimadoMedio,
+      paybackMeses: sim.paybackMeses,
+      score,
+    });
+  } catch (err) {
+    console.error("Falha ao enviar e-mail de notificação:", err);
+  }
 
   return { success: true, leadId: lead.id };
 }

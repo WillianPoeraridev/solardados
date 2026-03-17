@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { calcularSimulacao } from "@/lib/solar-calc";
+import { trackEvent, getDispositivo } from "@/lib/analytics";
 import FormularioLead from "@/components/FormularioLead";
 import type { SimuladorOutput, TipoImovel } from "@/types";
 
 interface SimuladorProps {
   cidade: string;
+  estado: string;
   distribuidora: string;
   municipioId: number;
   irradiacaoMedia: number;
@@ -36,10 +38,42 @@ export default function SimuladorSolar(props: SimuladorProps) {
   const [valorConta, setValorConta] = useState("");
   const [tipoImovel, setTipoImovel] = useState<TipoImovel>("casa_terrea");
   const [resultado, setResultado] = useState<SimuladorOutput | null>(null);
+  const iniciouDigitacao = useRef(false);
+
+  function ctx() {
+    return {
+      cidade: props.cidade,
+      estado: props.estado,
+      distribuidora: props.distribuidora,
+      dispositivo: getDispositivo(),
+    };
+  }
+
+  function handleValorChange(value: string) {
+    setValorConta(value);
+    if (!iniciouDigitacao.current && value.length > 0) {
+      iniciouDigitacao.current = true;
+      trackEvent("simulador_iniciado", ctx());
+    }
+  }
+
+  function handleValorBlur() {
+    const valor = parseFloat(valorConta);
+    if (valor > 0) {
+      trackEvent("simulador_etapa_1", { ...ctx(), valor_conta: valor });
+    }
+  }
+
+  function handleTipoChange(tipo: TipoImovel) {
+    setTipoImovel(tipo);
+    trackEvent("simulador_etapa_2", { ...ctx(), tipo_imovel: tipo });
+  }
 
   function handleCalcular() {
     const valor = parseFloat(valorConta);
     if (!valor || valor <= 0) return;
+
+    trackEvent("simulador_cta_clicado", { ...ctx(), valor_conta: valor });
 
     const output = calcularSimulacao({
       valorContaMensal: valor,
@@ -52,6 +86,12 @@ export default function SimuladorSolar(props: SimuladorProps) {
     });
 
     setResultado(output);
+    trackEvent("simulador_resultado_visualizado", {
+      ...ctx(),
+      sistema_kwp: output.sistemaKwp,
+      payback_meses: output.paybackMeses,
+    });
+    trackEvent("lead_formulario_aberto", ctx());
   }
 
   const paybackAnos = resultado ? Math.floor(resultado.paybackMeses / 12) : 0;
@@ -80,7 +120,8 @@ export default function SimuladorSolar(props: SimuladorProps) {
                 placeholder="Ex: 300"
                 min="1"
                 value={valorConta}
-                onChange={(e) => setValorConta(e.target.value)}
+                onChange={(e) => handleValorChange(e.target.value)}
+                onBlur={handleValorBlur}
                 onKeyDown={(e) => e.key === "Enter" && handleCalcular()}
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 text-lg focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 focus:outline-none"
               />
@@ -96,7 +137,9 @@ export default function SimuladorSolar(props: SimuladorProps) {
               <select
                 id="tipo-imovel"
                 value={tipoImovel}
-                onChange={(e) => setTipoImovel(e.target.value as TipoImovel)}
+                onChange={(e) =>
+                  handleTipoChange(e.target.value as TipoImovel)
+                }
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 text-lg focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 focus:outline-none bg-white"
               >
                 <option value="casa_terrea">Casa térrea</option>
@@ -217,6 +260,7 @@ export default function SimuladorSolar(props: SimuladorProps) {
                 tipoImovel={tipoImovel}
                 municipioId={props.municipioId}
                 nomeCidade={props.cidade}
+                estado={props.estado}
                 nomeDistribuidora={props.distribuidora}
                 irradiacaoMedia={props.irradiacaoMedia}
               />

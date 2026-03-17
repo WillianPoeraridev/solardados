@@ -7,6 +7,7 @@ import {
   validarEmail,
   formatarTelefone,
 } from "@/lib/validators";
+import { trackEvent, getDispositivo } from "@/lib/analytics";
 import type { SimuladorOutput } from "@/types";
 
 interface FormularioLeadProps {
@@ -15,6 +16,7 @@ interface FormularioLeadProps {
   tipoImovel: string;
   municipioId: number;
   nomeCidade: string;
+  estado: string;
   nomeDistribuidora: string;
   irradiacaoMedia: number;
 }
@@ -71,6 +73,8 @@ export default function FormularioLead(props: FormularioLeadProps) {
         casaPropria: casaPropriaValor,
         optinContato: true,
         municipioId: props.municipioId,
+        nomeCidade: props.nomeCidade,
+        estado: props.estado,
         irradiacaoMedia: props.irradiacaoMedia,
         simulacao: {
           valorContaMensal: props.valorContaMensal,
@@ -89,10 +93,22 @@ export default function FormularioLead(props: FormularioLeadProps) {
         },
       });
 
+      const gaCtx = {
+        cidade: props.nomeCidade,
+        estado: props.estado,
+        distribuidora: props.nomeDistribuidora,
+        dispositivo: getDispositivo(),
+      };
+
       if (result.success) {
         setEnviado(true);
+        trackEvent("lead_submetido", gaCtx);
       } else {
         setErroServidor(result.error);
+        trackEvent("lead_invalido_bloqueado", {
+          ...gaCtx,
+          motivo: result.error,
+        });
       }
     });
   }
