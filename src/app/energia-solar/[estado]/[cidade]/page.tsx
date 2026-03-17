@@ -220,6 +220,7 @@ export default async function CidadePage({
       {/* Seção 2 — Simulador */}
       <SimuladorSolar
         cidade={data.nome}
+        estado={uf}
         distribuidora={dist.nome}
         municipioId={data.id}
         irradiacaoMedia={irr}
