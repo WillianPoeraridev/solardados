@@ -221,6 +221,7 @@ export default async function CidadePage({
       <SimuladorSolar
         cidade={data.nome}
         distribuidora={dist.nome}
+        municipioId={data.id}
         irradiacaoMedia={irr}
         tarifaResidencial={tarifa}
         custoKwpMinimo={data.custoKwpMinimo ?? 0}
@@ -266,26 +267,6 @@ export default async function CidadePage({
         </div>
       </section>
 
-      {/* Seção 4 — CTA */}
-      <section className="py-12 px-4">
-        <div className="mx-auto max-w-5xl">
-          <div className="rounded-xl bg-yellow-50 border border-yellow-200 p-8 text-center">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
-              Quer receber propostas de instaladoras verificadas em {data.nome}?
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Em breve você poderá solicitar orçamentos gratuitos de instaladoras
-              parceiras da sua região.
-            </p>
-            <button
-              disabled
-              className="rounded-lg bg-gray-300 px-8 py-3 text-lg font-semibold text-gray-500 cursor-not-allowed"
-            >
-              Em breve
-            </button>
-          </div>
-        </div>
-      </section>
     </>
   );
 }

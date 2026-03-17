@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { calcularSimulacao } from "@/lib/solar-calc";
+import FormularioLead from "@/components/FormularioLead";
 import type { SimuladorOutput, TipoImovel } from "@/types";
 
 interface SimuladorProps {
   cidade: string;
   distribuidora: string;
+  municipioId: number;
   irradiacaoMedia: number;
   tarifaResidencial: number;
   custoKwpMinimo: number;
@@ -53,9 +55,7 @@ export default function SimuladorSolar(props: SimuladorProps) {
   }
 
   const paybackAnos = resultado ? Math.floor(resultado.paybackMeses / 12) : 0;
-  const paybackMesesRestante = resultado
-    ? resultado.paybackMeses % 12
-    : 0;
+  const paybackMesesRestante = resultado ? resultado.paybackMeses % 12 : 0;
 
   return (
     <section id="simulador" className="py-12 px-4">
@@ -153,11 +153,14 @@ export default function SimuladorSolar(props: SimuladorProps) {
               <div className="rounded-xl border border-green-200 bg-green-50 p-5">
                 <p className="text-sm text-gray-500">Payback</p>
                 <p className="text-2xl font-bold text-green-700">
-                  {paybackAnos} anos{paybackMesesRestante > 0 && ` e ${paybackMesesRestante} meses`}
+                  {paybackAnos} anos
+                  {paybackMesesRestante > 0 &&
+                    ` e ${paybackMesesRestante} meses`}
                 </p>
                 <p className="text-sm text-gray-600">
-                  Retorno de {formatarDecimal(resultado.retornoInvestimento, 0)}%
-                  em 25 anos
+                  Retorno de{" "}
+                  {formatarDecimal(resultado.retornoInvestimento, 0)}% em 25
+                  anos
                 </p>
               </div>
 
@@ -186,8 +189,38 @@ export default function SimuladorSolar(props: SimuladorProps) {
               Calculado com dados de irradiação do CRESESB para {props.cidade} e
               tarifa da {props.distribuidora}: R${" "}
               {formatarDecimal(props.tarifaResidencial, 2)}/kWh. Valores
-              estimados — consulte instaladoras locais para orçamento definitivo.
+              estimados — consulte instaladoras locais para orçamento
+              definitivo.
             </p>
+
+            {/* CTA + Formulário de lead */}
+            <div className="rounded-xl bg-yellow-50 border border-yellow-200 p-6">
+              <p className="text-gray-900 font-medium text-center mb-1">
+                Seu sistema ideal custaria entre{" "}
+                {formatarMoeda(resultado.custoEstimadoMin)} e{" "}
+                {formatarMoeda(resultado.custoEstimadoMax)} com payback de{" "}
+                {paybackAnos > 0 ? `${paybackAnos} anos` : ""}
+                {paybackAnos > 0 && paybackMesesRestante > 0 ? " e " : ""}
+                {paybackMesesRestante > 0
+                  ? `${paybackMesesRestante} meses`
+                  : ""}
+                .
+              </p>
+              <p className="text-sm text-gray-600 text-center mb-6">
+                Quer receber propostas de instaladoras verificadas em{" "}
+                {props.cidade}? É gratuito e sem compromisso.
+              </p>
+
+              <FormularioLead
+                dadosSimulacao={resultado}
+                valorContaMensal={parseFloat(valorConta)}
+                tipoImovel={tipoImovel}
+                municipioId={props.municipioId}
+                nomeCidade={props.cidade}
+                nomeDistribuidora={props.distribuidora}
+                irradiacaoMedia={props.irradiacaoMedia}
+              />
+            </div>
           </div>
         )}
       </div>
