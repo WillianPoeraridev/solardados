@@ -21,3 +21,18 @@ export const PRECO_POR_WP = {
 
 /** Vida útil estimada do sistema em anos */
 export const VIDA_UTIL_SISTEMA = 25;
+
+/** Fator de compensação — Fio B da Lei 14.300/2022 */
+export const FATOR_COMPENSACAO = 0.85;
+
+/** Potência padrão dos painéis solares no mercado BR (W) */
+export const POTENCIA_PAINEL_W = 550;
+
+/** Área ocupada por cada painel no telhado (m²) */
+export const AREA_PAINEL_M2 = 2.2;
+
+/** Fator de emissão do grid brasileiro (kg CO₂/kWh — fonte: MCTI) */
+export const FATOR_CO2_KG_POR_KWH = 0.0817;
+
+/** CO₂ absorvido por árvore por ano (kg) */
+export const CO2_POR_ARVORE_KG_ANO = 22;
