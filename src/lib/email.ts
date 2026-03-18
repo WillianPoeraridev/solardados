@@ -1,7 +1,5 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 interface NotificacaoLeadData {
   leadId: string;
   nomeCliente: string;
@@ -18,6 +16,13 @@ interface NotificacaoLeadData {
 }
 
 export async function notificarNovoLead(dados: NotificacaoLeadData) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn("⚠️ RESEND_API_KEY não configurada — e-mail não enviado");
+    return;
+  }
+
+  const resend = new Resend(apiKey);
   const paybackAnos = Math.floor(dados.paybackMeses / 12);
   const paybackMesesRest = dados.paybackMeses % 12;
   const paybackTexto =
