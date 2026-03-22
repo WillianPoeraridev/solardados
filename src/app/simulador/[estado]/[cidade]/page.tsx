@@ -334,14 +334,20 @@ export default async function SimuladorPage({
         </div>
       </section>
 
-      {/* Link de volta ao Cluster 1 */}
+      {/* Links cruzados */}
       <section className="py-8 px-4">
-        <div className="mx-auto max-w-5xl text-center">
+        <div className="mx-auto max-w-5xl flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-center">
           <Link
             href={`/energia-solar/${estado}/${cidade}`}
             className="text-yellow-600 hover:text-yellow-700 font-medium"
           >
             Saiba mais sobre energia solar em {data.nome} &rarr;
+          </Link>
+          <Link
+            href={`/instaladoras/${estado}/${cidade}`}
+            className="text-yellow-600 hover:text-yellow-700 font-medium"
+          >
+            Encontre instaladoras verificadas em {data.nome} &rarr;
           </Link>
         </div>
       </section>

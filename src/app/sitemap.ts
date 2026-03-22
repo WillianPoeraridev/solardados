@@ -28,6 +28,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   }));
 
+  const instaladoras: MetadataRoute.Sitemap = municipios.map((m) => ({
+    url: `https://solardados.com.br/instaladoras/${m.estado.toLowerCase()}/${m.slug}`,
+    lastModified: m.updatedAt,
+    changeFrequency: "monthly",
+    priority: 0.8,
+  }));
+
   return [
     {
       url: "https://solardados.com.br",
@@ -38,5 +45,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...cidadesCluster1,
     ...simulador,
     ...quantoCusta,
+    ...instaladoras,
   ];
 }

@@ -12,6 +12,7 @@
     "db:studio": "prisma studio",
     "db:seed": "tsx scripts/seed.ts",
     "db:seed-tier2": "tsx scripts/seed-tier2.ts",
+    "scrape:instaladoras": "tsx scripts/scrape-instaladoras.ts",
     "postinstall": "prisma generate",
     "test": "tsx --test src/lib/__tests__/solar-calc.test.ts"
   },

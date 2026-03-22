@@ -385,6 +385,12 @@ export default async function QuantoCustaPage({
           >
             Energia solar em {data.nome} &rarr;
           </Link>
+          <Link
+            href={`/instaladoras/${estado}/${cidade}`}
+            className="text-yellow-600 hover:text-yellow-700 font-medium"
+          >
+            Encontre instaladoras verificadas em {data.nome} &rarr;
+          </Link>
         </div>
       </section>
     </>

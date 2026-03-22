@@ -67,6 +67,8 @@ model Instaladora {
   email             String?
   website           String?
   googlePlaceId     String?  @unique
+  latitude          Float?
+  longitude         Float?
   ativa             Boolean  @default(true)
   leadParceira      Boolean  @default(false)
   createdAt         DateTime @default(now())

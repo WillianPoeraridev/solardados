@@ -274,7 +274,7 @@ export default async function CidadePage({
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
             Ferramentas para {data.nome}
           </h2>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <Link
               href={`/simulador/${estado}/${cidade}`}
               className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm hover:border-yellow-300 hover:shadow-md transition-all"
@@ -295,6 +295,17 @@ export default async function CidadePage({
               </h3>
               <p className="mt-2 text-sm text-gray-600">
                 Veja cenários de instalação e preços em {data.nome}
+              </p>
+            </Link>
+            <Link
+              href={`/instaladoras/${estado}/${cidade}`}
+              className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm hover:border-yellow-300 hover:shadow-md transition-all"
+            >
+              <h3 className="text-lg font-semibold text-gray-900 group-hover:text-yellow-700">
+                Instaladoras verificadas &rarr;
+              </h3>
+              <p className="mt-2 text-sm text-gray-600">
+                Veja empresas de energia solar em {data.nome}
               </p>
             </Link>
           </div>
