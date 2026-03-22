@@ -268,6 +268,39 @@ export default async function CidadePage({
         </div>
       </section>
 
+      {/* Seção 4 — Ferramentas (links cruzados Cluster 2) */}
+      <section className="py-12 px-4">
+        <div className="mx-auto max-w-5xl">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Ferramentas para {data.nome}
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Link
+              href={`/simulador/${estado}/${cidade}`}
+              className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm hover:border-yellow-300 hover:shadow-md transition-all"
+            >
+              <h3 className="text-lg font-semibold text-gray-900 group-hover:text-yellow-700">
+                Simulador de Energia Solar &rarr;
+              </h3>
+              <p className="mt-2 text-sm text-gray-600">
+                Calcule custo e payback com dados da sua conta de luz
+              </p>
+            </Link>
+            <Link
+              href={`/quanto-custa-energia-solar/${cidade}`}
+              className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm hover:border-yellow-300 hover:shadow-md transition-all"
+            >
+              <h3 className="text-lg font-semibold text-gray-900 group-hover:text-yellow-700">
+                Quanto custa energia solar? &rarr;
+              </h3>
+              <p className="mt-2 text-sm text-gray-600">
+                Veja cenários de instalação e preços em {data.nome}
+              </p>
+            </Link>
+          </div>
+        </div>
+      </section>
+
     </>
   );
 }
